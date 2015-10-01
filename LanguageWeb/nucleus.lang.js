@@ -1,4 +1,10 @@
-﻿var language = window.navigator.userLanguage || window.navigator.language;
+﻿function getLanguageUrl(langUrl) {
+    var url = window.location.host;
+    url = window.location.protocol + '//' + url + '/' + langUrl;
+    return url;
+}
+
+var language = window.navigator.userLanguage || window.navigator.language;
 var forcedLang = getUrlVars()['lang'];
 if (forcedLang != null) {
     language = forcedLang;
@@ -19,13 +25,15 @@ if (langPath == null) {
 }
 
 var client = new XMLHttpRequest();
-client.open('GET', langPath);
+//client.open('GET', langPath);
+client.open('GET', getLanguageUrl(langPath));
 client.onreadystatechange = function () {
     if (client.responseText == null || client.responseText == "") {
         return;
     }
 
     var langFile = JSON.parse(client.responseText);
+    langFile.data['__LANG'] = language;
 
     fixElement(document.getElementsByTagName("BODY")[0], langFile);
     fixElement(document.getElementsByTagName("TITLE")[0], langFile);
